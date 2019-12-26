@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Happychat Transcript Copy Button
 // @namespace    https://github.com/senff/Chat-transcript-copy-button
-// @version      1.0
+// @version      0.95
 // @description  Adds a COPY button that copies the entire transcript to your clipboard, so you can email it to the customer
 // @author       Senff
 // @require      https://code.jquery.com/jquery-1.12.4.js
@@ -15,19 +15,24 @@ var $ = window.jQuery;
 // === Creates new hidden block with the full transcript in it, cleaned and all  ===================================================
 function createTranscript() {
     var userID = $('.visitor-info > span:nth-child(3)').text();
-    $('body').append('<div id="full-transcript" style="display: none;"></div>');
+    $('body').append('<div id="full-transcript-text" class="full-transcript" style="display: none;"></div><div id="full-transcript-markup" class="full-transcript" style="display: block;"></div>');
     var allChat = $('.hapdash-chat-text').html();
     allChat = allChat.replace("Hello! Please select one of the options below", "Support topic");
     allChat = allChat.replace("I need help with", "Product");
     allChat = allChat.replace("Site Product", "Site");
+    allChat = allChat.replace("_", "hcunderscore");
     allChat = allChat.replace(/<br>/gi, 'hclinebreak');
-    $('#full-transcript').html(allChat);
-    $('#full-transcript .type-event').parent().remove();
-    $('#full-transcript .chat-timestamp').each(function(){
+    $('.full-transcript').html(allChat);
+    $('.full-transcript .type-event').parent().remove();
+    $('#full-transcript-text .chat-timestamp').each(function(){
         var timeStamp = $(this).text();
         $(this).parent().parent().prepend(timeStamp + '):hclinebreak');
     });
-    $('#full-transcript .hapdash-chat-bubble').each(function(){
+    $('#full-transcript-markup .chat-timestamp').each(function(){
+        var timeStamp = $(this).text();
+        $(this).parent().parent().prepend(timeStamp + ')_:hclinebreak');
+    });
+    $('#full-transcript-text .hapdash-chat-bubble').each(function(){
         if($(this).hasClass('chat-MessageToVisitor')) {
             var chatPerson = "WordPress.com";
         } else {
@@ -35,28 +40,50 @@ function createTranscript() {
         }
         $(this).parent().prepend("=== "+chatPerson + ' === (');
     });
-    $('#full-transcript .ssr-message').show();
-    $('#full-transcript .hapdash-chat-bubble br').after('<div>hclinebreak</div>');
-    $('#full-transcript .hapdash-chat-bubble p').after('<div>hclinebreak</div>');
-    $('#full-transcript .hapdash-chat-bubble .ssr-message p').after('<div>hclinebreak</div>');
-    $('#full-transcript .show-ssr-transcript').parent().parent().remove();
-    $('#full-transcript .hapdash-chat-tags, #full-transcript a[href*="gravatar"], #full-transcript .hapdash-chat-meta').remove();
-    $('#full-transcript .hapdash-chat-item').after('<div class="newLine">hclinebreak</div>');
-    $('.hapdash-card-header h3').append('<a href="#" class="copy-transcript" style="display: inline-block;background:#14acdd;color:#ffffff;padding: 7px 15px;width: auto;border-radius: 5px;margin:0 10px; font-family: arial; text-decoration: none;text-shadow: -1px -1px 0 #0077bb; cursor: pointer;">COPY TRANSCRIPT TO CLIPBOARD</a>');
+    $('#full-transcript-markup .hapdash-chat-bubble').each(function(){
+        if($(this).hasClass('chat-MessageToVisitor')) {
+            var chatPerson = "WordPress.com";
+        } else {
+            chatPerson = userID;
+        }
+        $(this).parent().prepend("**- "+chatPerson + '** _(');
+    });
+    $('.full-transcript .ssr-message').parent().parent().remove();
+    $('.full-transcript .hapdash-chat-bubble br').after('<div>hclinebreak</div>');
+    $('#full-transcript-text .hapdash-chat-bubble p').after('<div>hclinebreak</div>');
+    $('#full-transcript-markup .hapdash-chat-bubble p').before('<div>hcmsgstart</div>').after('<div>hcmsgend</div>');
+    $('.full-transcript .hapdash-chat-tags, .full-transcript a[href*="gravatar"], .full-transcript .hapdash-chat-meta').remove();
+    $('.full-transcript .hapdash-chat-item').after('<div>hclinebreak</div>');
+    $('.hapdash-card-header h3').after('COPY TRANSCRIPT TO CLIPBOARD: <a href="#" class="copy-transcript-text" style="display: inline-block;background:#14acdd;color:#ffffff;padding: 7px 15px;width: auto;border-radius: 5px;margin:0 10px; font-family: arial; text-decoration: none;text-shadow: -1px -1px 0 #0077bb; cursor: pointer;">PLAIN TEXT</a> <a href="#" class="copy-transcript-markup" style="display: inline-block;background:#14acdd;color:#ffffff;padding: 7px 15px;width: auto;border-radius: 5px;margin:0 10px; font-family: arial; text-decoration: none;text-shadow: -1px -1px 0 #0077bb; cursor: pointer;">MARKUP (FOR ZENDESK)</a>');
 
     // Remove all double spaces and make sure all line breaks are good
-    var transcript1 = $('#full-transcript').text();
-    var transcript2 = transcript1.replace(/\s+/g," ");
-    var transcript3 = transcript2.replace(/hclinebreak/gi, '\n');
-    $('#full-transcript').text(transcript3);
+    var transcripttext = $('#full-transcript-text').text();
+    transcripttext = transcripttext.replace('hcunderscore','_');
+    transcripttext = transcripttext.replace(/\s+/g," ");
+    transcripttext = transcripttext.replace(/hclinebreak/gi, '\n');
+    $('#full-transcript-text').text(transcripttext);
+
+    var transcriptmarkup = $('#full-transcript-markup').text();
+    transcriptmarkup = transcriptmarkup.replace('hcunderscore','_');
+    transcriptmarkup = transcriptmarkup.replace(/\s+/g," ");
+    transcriptmarkup = transcriptmarkup.replace(/hclinebreak/gi, '\n');
+    transcriptmarkup = transcriptmarkup.replace(/hcmsgstart/gi, '');
+    transcriptmarkup = transcriptmarkup.replace(/hcmsgend/gi, ' \n');
+    $('#full-transcript-markup').text('\n _[Start of chat]_ =================================================== \n\n' + transcriptmarkup + '_[End of chat]_ =================================================== \n');
 }
 
 
 // === Copy the SSR to the clipboard ===================================================
-$("body").on('click','.copy-transcript', function () {
-    copyToClipboard(document.getElementById('full-transcript'));
+$("body").on('click','.copy-transcript-text', function () {
+    copyToClipboard(document.getElementById('full-transcript-text'));
     $(this).html('COPIED!');
-    setTimeout(function(){$('.copy-transcript').text('COPY TRANSCRIPT TO CLIPBOARD')}, 3000);
+    setTimeout(function(){$('.copy-transcript-text').text('PLAIN TEXT')}, 3000);
+});
+
+$("body").on('click','.copy-transcript-markup', function () {
+    copyToClipboard(document.getElementById('full-transcript-markup'));
+    $(this).html('COPIED!');
+    setTimeout(function(){$('.copy-transcript-markup').text('MARKUP (FOR ZENDESK)')}, 3000);
 });
 
 
@@ -110,6 +137,7 @@ function copyToClipboard(elem) {
     }
     return succeed;
 }
+
 
 $(document).ready(function() {
    createTranscript();
