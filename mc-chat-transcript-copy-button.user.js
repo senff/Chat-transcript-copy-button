@@ -2,11 +2,11 @@
 // @name         Happychat Transcript Copy Button
 // @namespace    https://github.com/senff/Chat-transcript-copy-button
 // @version      0.95
-// @description  Adds a COPY button that copies the entire transcript to your clipboard, so you can email it to the customer
+// @description  Adds COPY buttons that copy the entire transcript to your clipboard, so you can email it to the customer
 // @author       Senff
 // @require      https://code.jquery.com/jquery-1.12.4.js
 // @match        https://mc.a8c.com/support-stats/happychat/*
-// @updateURL    https://github.com/senff/Chat-transcripts/raw/master/mc-chat-transcript-copy-button.user.js
+// @updateURL    https://github.com/senff/Chat-transcript-copy-button/raw/master/mc-chat-transcript-copy-button.user.js
 // @grant        none
 // ==/UserScript==
 
