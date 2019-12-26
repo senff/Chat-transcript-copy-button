@@ -15,7 +15,7 @@ var $ = window.jQuery;
 // === Creates new hidden block with the full transcript in it, cleaned and all  ===================================================
 function createTranscript() {
     var userID = $('.visitor-info > span:nth-child(3)').text();
-    $('body').append('<div id="full-transcript-text" class="full-transcript" style="display: none;"></div><div id="full-transcript-markup" class="full-transcript" style="display: block;"></div>');
+    $('body').append('<div id="full-transcript-text" class="full-transcript" style="display: none;"></div><div id="full-transcript-markup" class="full-transcript" style="display: none;"></div>');
     var allChat = $('.hapdash-chat-text').html();
     allChat = allChat.replace("Hello! Please select one of the options below", "Support topic");
     allChat = allChat.replace("I need help with", "Product");
