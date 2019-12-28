@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Happychat Transcript Copy Button
 // @namespace    https://github.com/senff/Chat-transcript-copy-button
-// @version      0.95
-// @description  Adds COPY buttons that copy the entire transcript to your clipboard, so you can email it to the customer
+// @version      0.99
+// @description  Adds a COPY button that copies the entire transcript to your clipboard, so you can email it to the customer
 // @author       Senff
 // @require      https://code.jquery.com/jquery-1.12.4.js
 // @match        https://mc.a8c.com/support-stats/happychat/*
-// @updateURL    https://github.com/senff/Chat-transcript-copy-button/raw/master/mc-chat-transcript-copy-button.user.js
+// @updateURL    https://github.com/senff/Chat-transcripts/raw/master/mc-chat-transcript-copy-button.user.js
 // @grant        none
 // ==/UserScript==
 
@@ -37,6 +37,10 @@ function createTranscript() {
             var chatPerson = "WordPress.com";
         } else {
             chatPerson = userID;
+            var msgContent = $(this).text();
+            if (msgContent.includes('User Agent: ')) {
+                $(this).parent().remove();
+            }
         }
         $(this).parent().prepend("=== "+chatPerson + ' === (');
     });
@@ -45,6 +49,10 @@ function createTranscript() {
             var chatPerson = "WordPress.com";
         } else {
             chatPerson = userID;
+            var msgContent = $(this).text();
+            if (msgContent.includes('User Agent: ')) {
+                $(this).parent().remove();
+            }
         }
         $(this).parent().prepend("**- "+chatPerson + '** _(');
     });
@@ -54,14 +62,14 @@ function createTranscript() {
     $('#full-transcript-markup .hapdash-chat-bubble p').before('<div>hcmsgstart</div>').after('<div>hcmsgend</div>');
     $('.full-transcript .hapdash-chat-tags, .full-transcript a[href*="gravatar"], .full-transcript .hapdash-chat-meta').remove();
     $('.full-transcript .hapdash-chat-item').after('<div>hclinebreak</div>');
-    $('.hapdash-card-header h3').after('COPY TRANSCRIPT TO CLIPBOARD: <a href="#" class="copy-transcript-text" style="display: inline-block;background:#14acdd;color:#ffffff;padding: 7px 15px;width: auto;border-radius: 5px;margin:0 10px; font-family: arial; text-decoration: none;text-shadow: -1px -1px 0 #0077bb; cursor: pointer;">PLAIN TEXT</a> <a href="#" class="copy-transcript-markup" style="display: inline-block;background:#14acdd;color:#ffffff;padding: 7px 15px;width: auto;border-radius: 5px;margin:0 10px; font-family: arial; text-decoration: none;text-shadow: -1px -1px 0 #0077bb; cursor: pointer;">MARKUP (FOR ZENDESK)</a>');
+    $('.hapdash-card-header h3').after('COPY TRANSCRIPT TO CLIPBOARD: <a href="javascript:void(0);" class="copy-transcript-text" style="display: inline-block;background:#14acdd;color:#ffffff;padding: 7px 15px;width: auto;border-radius: 5px;margin:0 10px; font-family: arial; text-decoration: none;text-shadow: -1px -1px 0 #0077bb; cursor: pointer;">PLAIN TEXT</a> <a href="javascript:void(0);" class="copy-transcript-markup" style="display: inline-block;background:#14acdd;color:#ffffff;padding: 7px 15px;width: auto;border-radius: 5px;margin:0 10px; font-family: arial; text-decoration: none;text-shadow: -1px -1px 0 #0077bb; cursor: pointer;">MARKUP (FOR ZENDESK)</a>');
 
     // Remove all double spaces and make sure all line breaks are good
     var transcripttext = $('#full-transcript-text').text();
     transcripttext = transcripttext.replace('hcunderscore','_');
     transcripttext = transcripttext.replace(/\s+/g," ");
     transcripttext = transcripttext.replace(/hclinebreak/gi, '\n');
-    $('#full-transcript-text').text(transcripttext);
+    $('#full-transcript-text').text('\n [Start of chat] =================================================== \n\n' + transcripttext + '[End of chat] =================================================== \n');
 
     var transcriptmarkup = $('#full-transcript-markup').text();
     transcriptmarkup = transcriptmarkup.replace('hcunderscore','_');
@@ -70,6 +78,7 @@ function createTranscript() {
     transcriptmarkup = transcriptmarkup.replace(/hcmsgstart/gi, '');
     transcriptmarkup = transcriptmarkup.replace(/hcmsgend/gi, ' \n');
     $('#full-transcript-markup').text('\n _[Start of chat]_ =================================================== \n\n' + transcriptmarkup + '_[End of chat]_ =================================================== \n');
+
 }
 
 
@@ -105,7 +114,7 @@ function copyToClipboard(elem) {
             var target = document.createElement("textarea");
             target.style.position = "absolute";
             target.style.left = "-9999px";
-            target.style.top = "0";
+            target.style.bottom = "0";
             target.id = targetId;
             document.body.appendChild(target);
         }
