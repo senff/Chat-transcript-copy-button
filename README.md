@@ -1,6 +1,6 @@
 ## WHAT DOES THIS CSS/JAVASCRIPT DO
 
-- adds a COPY button that copies the entire transcript to your clipboard, so you can email it to the customer
+- adds COPY buttons that copy the entire transcript to your clipboard, so you can email it to the customer
 
 
 ## REQUIREMENTS:
