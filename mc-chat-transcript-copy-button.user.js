@@ -6,7 +6,7 @@
 // @author       Senff
 // @require      https://code.jquery.com/jquery-1.12.4.js
 // @match        https://mc.a8c.com/support-stats/happychat/*
-// @updateURL    https://github.com/senff/Chat-transcripts/raw/master/mc-chat-transcript-copy-button.user.js
+// @updateURL    https://github.com/senff/Chat-transcript-copy-button/raw/master/mc-chat-transcript-copy-button.user.js
 // @grant        none
 // ==/UserScript==
 
