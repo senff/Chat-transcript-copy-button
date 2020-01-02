@@ -15,9 +15,8 @@ With Tampermonkey, you can add your own custom Javascript code to any site, to m
 ## INSTALLATION:
 
 1. Install Tampermonkey extension
-2. Create a new script, with name "_Happychat Transcript Copy Button_"
-8. Paste the contents of **mc-chat-transcript-copy-button.user.js** into the code field
-9. **SAVE**
+2. Go to https://github.com/senff/Chat-transcript-copy-button/raw/master/mc-chat-transcript-copy-button.user.js
+3. Select the **INSTALL** button.
 
 ## MORE INFORMATION:
 https://heinvestigations.wordpress.com/2019/01/14/happy-suite-of-happiness-hacks/
